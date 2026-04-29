@@ -124,8 +124,8 @@ export function ReachExpandedContent({ filterContext, data, isLoading }: ReachEx
   const topChannel = sortedByReach[0];
   const topReachLabel = topChannel?.reach?.value != null ? String(topChannel.reach.value) : '—';
 
-  const anyRatio = channels.some((ch) => parseRatioPercent(ch.qualified_reach_ratio) != null);
-  const penetrationTitle = anyRatio ? 'Qualified reach rate by channel' : 'Reach share by channel';
+  const anyRatio = channels.some((ch) => parseRatioPercent(ch.share_of_voice) != null);
+  const penetrationTitle = anyRatio ? 'Share of Voice (SOV) by channel' : 'Reach share by channel';
   const penetrationSubtitle = anyRatio
     ? '% of target audience reached (when available)'
     : 'Share of summed channel reach (channels may overlap; not deduplicated)';
@@ -212,9 +212,9 @@ export function ReachExpandedContent({ filterContext, data, isLoading }: ReachEx
                 const q =
                   ch.qualified_reach?.available && ch.qualified_reach.value != null
                     ? parseReachNumber({
-                        value: ch.qualified_reach.value as string | number,
-                        tooltip: ch.qualified_reach.tooltip,
-                      })
+                      value: ch.qualified_reach.value as string | number,
+                      tooltip: ch.qualified_reach.tooltip,
+                    })
                     : 0;
                 const reachPct = maxReach > 0 ? (r / maxReach) * 100 : 0;
                 const qualPct = maxReach > 0 ? (q / maxReach) * 100 : 0;
@@ -408,7 +408,7 @@ export function ReachExpandedContent({ filterContext, data, isLoading }: ReachEx
 
           <div className="space-y-5 max-h-[360px] overflow-y-auto pr-1">
             {sortedByReach.map((ch) => {
-              const ratio = parseRatioPercent(ch.qualified_reach_ratio);
+              const ratio = parseRatioPercent(ch.share_of_voice);
               const r = parseReachNumber(ch.reach);
               const sharePct = sumReach > 0 ? (r / sumReach) * 100 : 0;
               const displayPct = ratio != null ? ratio : sharePct;
@@ -447,7 +447,7 @@ export function ReachExpandedContent({ filterContext, data, isLoading }: ReachEx
                   <div className="flex-1 min-w-0">
                     <h4 className="text-[15px] font-semibold text-[#1F2937] mb-0.5 truncate">{ch.channel}</h4>
                     <p className="text-[13px] text-[#9CA3AF] font-normal">
-                      {ratio != null ? `${Math.round(ratio)}% qualified reach rate` : `${Math.round(sharePct)}% of summed reach`}
+                      {ratio != null ? `${Math.round(ratio)}% Share of Voice (SOV)` : `${Math.round(sharePct)}% of summed reach`}
                     </p>
                   </div>
                   <div className="flex-shrink-0">
@@ -462,10 +462,10 @@ export function ReachExpandedContent({ filterContext, data, isLoading }: ReachEx
 
           <div className="flex items-center justify-between mt-6 pt-3.5 border-t border-[#E7E8EC]/60 text-[13px] text-[#6B7280] font-normal">
             <div>
-              Overall QRR:{' '}
+              Overall SOV:{' '}
               <span className="font-bold text-[#1F2937]">
-                {data?.qualified_reach_ratio?.available && data.qualified_reach_ratio.value != null
-                  ? String(data.qualified_reach_ratio.value)
+                {data?.share_of_voice?.available && data.share_of_voice.value != null
+                  ? String(data.share_of_voice.value)
                   : '—'}
               </span>
             </div>

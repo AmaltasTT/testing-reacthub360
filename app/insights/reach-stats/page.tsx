@@ -477,7 +477,7 @@ export default function ReachInsights() {
                   >
                     {summary.totals.qrrDelta} vs prior
                   </div>
-                  <div style={{ fontSize: 11, color: "#9A9AAA", marginTop: 2 }}>Qualified Reach Rate</div>
+                  <div style={{ fontSize: 11, color: "#9A9AAA", marginTop: 2 }}>Share of Voice (SOV)</div>
                 </div>
                 <ArcColorIndicator percentage={Math.round(summary.totals.qrr * 100)} label="rate" />
               </div>

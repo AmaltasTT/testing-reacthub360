@@ -55,7 +55,7 @@ const fallbackPhasesData = [
     primaryMetrics: [
       { label: 'Qualified Reach', value: '—', delta: '' },
       { label: 'Cost per Qualified Reach (CpQR)', value: '—', delta: '' },
-      { label: 'Qualified Reach Rate', value: '—', delta: '' },
+      { label: 'Share of Voice (SOV)', value: '—', delta: '' },
       { label: 'Audience Penetration Rate', value: '—', delta: '' }
     ],
     supportingMetrics: [
@@ -164,7 +164,7 @@ export default function InsightsIQPage() {
   const [customRange, setCustomRange] = useState<DateRange>({ start: null, end: null });
 
   // Expanded phase state for lazy loading detail APIs
-  const [expandedPhases, setExpandedPhases] = useState<Record<string, boolean>>({});
+  const [expandedPhases, setExpandedPhases] = useState<Record<string, boolean>>({ 'Reach': true });
 
   const urlCampaignId = useMemo(
     () => readCampaignIdFromSearchParams(searchParams),
@@ -217,8 +217,8 @@ export default function InsightsIQPage() {
     };
   }, [selectedCampaigns, selectedGeography, selectedPeriod, customRange]);
 
-  const hasCampaignFilter = true;
-    //selectedCampaigns.length > 0 && selectedCampaigns.some((id) => id.trim() !== "" && Number.isFinite(Number(id)));
+  const hasCampaignFilter = true; // temporarily set to true to force API calls
+  // selectedCampaigns.length > 0 && selectedCampaigns.some((id) => id.trim() !== "" && Number.isFinite(Number(id)));
 
   const brandMomentumFilters = useMemo(() => {
     const { dateFrom, dateTo } = computeDateRange(selectedPeriod, customRange);
@@ -267,7 +267,7 @@ export default function InsightsIQPage() {
     const reachLabelMap: Record<string, string> = {
       'Total Reach': 'Qualified Reach',
       'Cost per Reach (CPR)': 'Cost per Qualified Reach (CpQR)',
-      'Engaged Reach': 'Qualified Reach Rate',
+      'Engaged Reach': 'Share of Voice (SOV)',
     };
     const remapReachLabels = (metrics: PhaseMetric[]): PhaseMetric[] =>
       metrics.map((m) => ({ ...m, label: reachLabelMap[m.label] ?? m.label }));
@@ -311,7 +311,7 @@ export default function InsightsIQPage() {
   const cpqrDelta = snapshot?.cost_per_reach?.delta ?? null;
   const cpqrIsBelow = !!(cpqrDelta && (cpqrDelta.startsWith('-') || cpqrDelta.startsWith('−')));
 
-  // QRR Card data — uses total_reach percentage (% of target reached)
+  // SOV Card data — uses total_reach percentage (% of target reached)
   const qrrPercent = snapshot?.total_reach?.percentage ?? 0;
   const qrrDelta = snapshot?.total_reach?.delta ?? null;
 
@@ -400,240 +400,240 @@ export default function InsightsIQPage() {
               </div>
               <div style={{ background: '#fff', borderRadius: '18px', border: '1px solid rgba(0,0,0,0.06)', padding: '24px', height: '200px' }} className="animate-pulse">
                 <div style={{ height: '10px', width: '40%', background: '#EEEDF5', borderRadius: '5px', marginBottom: '20px' }} />
-                {[1,2,3].map(i => <div key={i} style={{ height: '10px', background: '#EEEDF5', borderRadius: '5px', marginBottom: '12px', width: `${70 + i * 5}%` }} />)}
+                {[1, 2, 3].map(i => <div key={i} style={{ height: '10px', background: '#EEEDF5', borderRadius: '5px', marginBottom: '12px', width: `${70 + i * 5}%` }} />)}
               </div>
             </div>
           </div>
         ) : (
-        <>
-        {/* Row 1: KPI Cards Strip */}
-        <div style={{ display: 'flex', gap: '16px', alignItems: 'stretch', marginBottom: '20px' }}>
+          <>
+            {/* Row 1: KPI Cards Strip */}
+            <div style={{ display: 'flex', gap: '16px', alignItems: 'stretch', marginBottom: '20px' }}>
 
-          {/* Card 1: OMTM - Qualified Reach */}
-          <div style={{ width: '340px', flexShrink: 0, background: 'linear-gradient(180deg, #FFFFFF 0%, #F9F8FF 100%)', borderRadius: '18px', border: '2px solid rgba(124, 92, 252, 0.15)', boxShadow: '0 2px 8px rgba(124, 92, 252, 0.12), 0 8px 32px rgba(124, 92, 252, 0.08)', padding: '24px 24px 20px', position: 'relative', overflow: 'hidden' }}>
-            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '4px', background: 'linear-gradient(90deg, #7C5CFC 0%, #A78BFA 50%, #7C5CFC 100%)' }} />
-            <div style={{ marginTop: '4px', marginBottom: '10px' }}>
-              <span style={{ display: 'inline-block', background: 'linear-gradient(90deg, #7C5CFC 0%, #A78BFA 100%)', color: '#FFFFFF', fontSize: '8px', fontWeight: 700, letterSpacing: '0.1em', padding: '2px 8px', borderRadius: '4px' }}>OMTM</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '12px' }}>
-              <span style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.07em', color: '#8B8FA3' }}>QUALIFIED REACH (QR)</span>
-              <Info size={13} style={{ color: '#C8CBD9' }} />
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
-              <svg width="200" height="115" viewBox="0 0 200 115">
-                <defs>
-                  <linearGradient id="qrGaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#7C5CFC" />
-                    <stop offset="100%" stopColor="#A78BFA" />
-                  </linearGradient>
-                  <filter id="qrGlow">
-                    <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-                    <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
-                  </filter>
-                </defs>
-                {/* Background arc */}
-                <path d="M 15 100 A 85 85 0 0 1 185 100" fill="none" stroke="#EEEDF5" strokeWidth="12" strokeLinecap="round" />
-                {/* Progress arc */}
-                <path
-                  d="M 15 100 A 85 85 0 0 1 185 100"
-                  fill="none"
-                  stroke="url(#qrGaugeGrad)"
-                  strokeWidth="12"
-                  strokeLinecap="round"
-                  strokeDasharray={`${(qrPercent / 100) * Math.PI * 85} ${Math.PI * 85}`}
-                  filter="url(#qrGlow)"
-                />
-                {/* End marker */}
-                <circle cx="185" cy="100" r="4" fill="none" stroke="#C8CBD9" strokeWidth="1.5" strokeDasharray="2 2" />
-                <text x="100" y="76" textAnchor="middle" style={{ fontSize: '30px', fontWeight: 700, fill: '#1A1D2E', letterSpacing: '-0.02em' }}>{qrValue}</text>
-                <text x="100" y="97" textAnchor="middle">
-                  <tspan style={{ fontSize: '12px', fill: '#8B8FA3' }}>of </tspan>
-                  <tspan style={{ fontSize: '14px', fontWeight: 700, fill: '#1A1D2E' }}>1M</tspan>
-                </text>
-              </svg>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              {qrDelta && <span style={{ background: '#E8FAF0', color: '#2DB77B', fontSize: '11px', fontWeight: 600, padding: '4px 10px', borderRadius: '14px' }}>{qrDelta}</span>}
-              <span style={{ fontSize: '12px', fontWeight: 700, color: '#7C5CFC' }}>Reached: {qrPercent}%</span>
-            </div>
-          </div>
-
-          {/* Card 2: Cost per QR (CpQR) */}
-          <div style={{ flex: '1 1 0', minWidth: '160px', background: '#FFFFFF', borderRadius: '18px', border: '1px solid rgba(0,0,0,0.04)', boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 6px 20px rgba(0,0,0,0.05)', padding: '24px 20px 20px', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'linear-gradient(90deg, #7C5CFC 0%, #A78BFA 100%)' }} />
-            <div style={{ height: '44px', display: 'flex', alignItems: 'start', paddingTop: '4px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <span style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.07em', color: '#8B8FA3' }}>COST PER QR (CpQR)</span>
-                <Info size={13} style={{ color: '#C8CBD9' }} />
-              </div>
-            </div>
-            <div style={{ height: '52px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '28px', fontWeight: 700, color: '#1A1D2E' }}>{cpqrValue}</span>
-              {cpqrIsBelow
-                ? <ArrowDown size={18} style={{ color: '#2DB77B' }} />
-                : <ArrowUp size={18} style={{ color: '#E5484D' }} />
-              }
-            </div>
-            <div style={{ height: '60px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'start', paddingTop: '4px' }}>
-              <div>
-                <span style={{ fontSize: '12px', color: '#A0A4B8' }}>target </span>
-                <span style={{ fontSize: '13px', fontWeight: 700, color: '#1A1D2E' }}>{cpqrTargetVal}</span>
-              </div>
-            </div>
-            <div style={{ height: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              {cpqrDelta && <span style={{ background: cpqrIsBelow ? '#E8FAF0' : '#FDEDF0', color: cpqrIsBelow ? '#2DB77B' : '#E5484D', fontSize: '11px', fontWeight: 600, padding: '4px 10px', borderRadius: '14px' }}>{cpqrDelta}</span>}
-            </div>
-          </div>
-
-          {/* Card 3: Qualified Reach Rate (QRR) */}
-          <div style={{ flex: '1 1 0', minWidth: '160px', background: '#FFFFFF', borderRadius: '18px', border: '1px solid rgba(0,0,0,0.04)', boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 6px 20px rgba(0,0,0,0.05)', padding: '24px 20px 20px', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'linear-gradient(90deg, #7C5CFC 0%, #A78BFA 100%)' }} />
-            <div style={{ height: '44px', display: 'flex', alignItems: 'start', paddingTop: '4px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <span style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.07em', color: '#8B8FA3' }}>QUALIFIED REACH RATE (QRR)</span>
-                <Info size={13} style={{ color: '#C8CBD9' }} />
-              </div>
-            </div>
-            <div style={{ height: '52px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '3px' }}>
-              <div style={{ fontSize: '28px', fontWeight: 700, color: '#1A1D2E' }}>{qrrPercent}%</div>
-              <div style={{ fontSize: '11px', color: '#A0A4B8' }}>qualified reach</div>
-            </div>
-            <div style={{ height: '60px', display: 'flex', flexDirection: 'column', justifyContent: 'start', paddingTop: '4px' }}>
-              <div style={{ position: 'relative', marginBottom: '8px' }}>
-                <div style={{ display: 'flex', gap: '3px' }}>
-                  {[
-                    { color: '#E5484D', threshold: 20 },
-                    { color: '#F59E0B', threshold: 40 },
-                    { color: '#EAB308', threshold: 60 },
-                    { color: '#22C55E', threshold: 80 },
-                    { color: '#10B981', threshold: 100 },
-                  ].map((seg, i) => (
-                    <div key={i} style={{ flex: 1, height: '8px', background: seg.color, opacity: qrrPercent >= seg.threshold ? 1 : 0.25, borderRadius: i === 0 ? '4px 0 0 4px' : i === 4 ? '0 4px 4px 0' : '0' }} />
-                  ))}
+              {/* Card 1: OMTM - Qualified Reach */}
+              <div style={{ width: '340px', flexShrink: 0, background: 'linear-gradient(180deg, #FFFFFF 0%, #F9F8FF 100%)', borderRadius: '18px', border: '2px solid rgba(124, 92, 252, 0.15)', boxShadow: '0 2px 8px rgba(124, 92, 252, 0.12), 0 8px 32px rgba(124, 92, 252, 0.08)', padding: '24px 24px 20px', position: 'relative', overflow: 'hidden' }}>
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '4px', background: 'linear-gradient(90deg, #7C5CFC 0%, #A78BFA 50%, #7C5CFC 100%)' }} />
+                <div style={{ marginTop: '4px', marginBottom: '10px' }}>
+                  <span style={{ display: 'inline-block', background: 'linear-gradient(90deg, #7C5CFC 0%, #A78BFA 100%)', color: '#FFFFFF', fontSize: '8px', fontWeight: 700, letterSpacing: '0.1em', padding: '2px 8px', borderRadius: '4px' }}>OMTM</span>
                 </div>
-                <div style={{ position: 'absolute', left: `${qrrPercent}%`, top: '8px', transform: 'translateX(-50%)', width: 0, height: 0, borderLeft: '4px solid transparent', borderRight: '4px solid transparent', borderTop: '6px solid #1A1D2E' }} />
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9px', color: '#C8CBD9' }}>
-                <span>0%</span><span>50%</span><span>100%</span>
-              </div>
-            </div>
-            <div style={{ height: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              {qrrDelta && <span style={{ background: '#E8FAF0', color: '#2DB77B', fontSize: '11px', fontWeight: 600, padding: '4px 10px', borderRadius: '14px' }}>{qrrDelta}</span>}
-            </div>
-          </div>
-
-          {/* Card 4: Audience Penetration Rate (APR) */}
-          <div style={{ flex: '1 1 0', minWidth: '160px', background: '#FFFFFF', borderRadius: '18px', border: '1px solid rgba(0,0,0,0.04)', boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 6px 20px rgba(0,0,0,0.05)', padding: '24px 20px 20px', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'linear-gradient(90deg, #7C5CFC 0%, #A78BFA 100%)' }} />
-            <div style={{ height: '44px', display: 'flex', alignItems: 'start', paddingTop: '4px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <span style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.07em', color: '#8B8FA3' }}>AUDIENCE PENETRATION (APR)</span>
-                <Info size={13} style={{ color: '#C8CBD9' }} />
-              </div>
-            </div>
-            <div style={{ height: '52px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-              <span style={{ fontSize: '28px', fontWeight: 700, color: '#1A1D2E' }}>{aprValue}</span>
-              <span style={{ fontSize: '12px', fontWeight: 500, color: '#A0A4B8' }}>penetration</span>
-            </div>
-            <div style={{ height: '60px', display: 'flex', flexDirection: 'column', justifyContent: 'start', gap: '6px', paddingTop: '4px' }}>
-              <div style={{ textAlign: 'center' }}>
-                <span style={{ fontSize: '12px', fontWeight: 700, color: '#1A1D2E' }}>252K</span>
-                <span style={{ fontSize: '11px', color: '#A0A4B8' }}> of </span>
-                <span style={{ fontSize: '12px', fontWeight: 700, color: '#1A1D2E' }}>1.4M</span>
-                <span style={{ fontSize: '11px', color: '#A0A4B8' }}> ICP</span>
-              </div>
-              <div>
-                <div style={{ position: 'relative', height: '8px', background: '#EEEDF5', borderRadius: '5px', overflow: 'hidden', marginBottom: '4px' }}>
-                  <div style={{ width: `${aprPercent}%`, height: '100%', background: 'linear-gradient(90deg, #7C5CFC 0%, #A78BFA 100%)', borderRadius: '5px', boxShadow: '0 0 8px rgba(124, 92, 252, 0.2)' }} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '12px' }}>
+                  <span style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.07em', color: '#8B8FA3' }}>QUALIFIED REACH (QR)</span>
+                  <Info size={13} style={{ color: '#C8CBD9' }} />
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9px' }}>
-                  <span style={{ color: '#7C5CFC', fontWeight: 600 }}>Reached 252K</span>
-                  <span style={{ color: '#C8CBD9' }}>Untapped 1.1M</span>
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+                  <svg width="200" height="115" viewBox="0 0 200 115">
+                    <defs>
+                      <linearGradient id="qrGaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#7C5CFC" />
+                        <stop offset="100%" stopColor="#A78BFA" />
+                      </linearGradient>
+                      <filter id="qrGlow">
+                        <feGaussianBlur stdDeviation="3" result="coloredBlur" />
+                        <feMerge><feMergeNode in="coloredBlur" /><feMergeNode in="SourceGraphic" /></feMerge>
+                      </filter>
+                    </defs>
+                    {/* Background arc */}
+                    <path d="M 15 100 A 85 85 0 0 1 185 100" fill="none" stroke="#EEEDF5" strokeWidth="12" strokeLinecap="round" />
+                    {/* Progress arc */}
+                    <path
+                      d="M 15 100 A 85 85 0 0 1 185 100"
+                      fill="none"
+                      stroke="url(#qrGaugeGrad)"
+                      strokeWidth="12"
+                      strokeLinecap="round"
+                      strokeDasharray={`${(qrPercent / 100) * Math.PI * 85} ${Math.PI * 85}`}
+                      filter="url(#qrGlow)"
+                    />
+                    {/* End marker */}
+                    <circle cx="185" cy="100" r="4" fill="none" stroke="#C8CBD9" strokeWidth="1.5" strokeDasharray="2 2" />
+                    <text x="100" y="76" textAnchor="middle" style={{ fontSize: '30px', fontWeight: 700, fill: '#1A1D2E', letterSpacing: '-0.02em' }}>{qrValue}</text>
+                    <text x="100" y="97" textAnchor="middle">
+                      <tspan style={{ fontSize: '12px', fill: '#8B8FA3' }}>of </tspan>
+                      <tspan style={{ fontSize: '14px', fontWeight: 700, fill: '#1A1D2E' }}>1M</tspan>
+                    </text>
+                  </svg>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  {qrDelta && <span style={{ background: '#E8FAF0', color: '#2DB77B', fontSize: '11px', fontWeight: 600, padding: '4px 10px', borderRadius: '14px' }}>{qrDelta}</span>}
+                  <span style={{ fontSize: '12px', fontWeight: 700, color: '#7C5CFC' }}>Reached: {qrPercent}%</span>
                 </div>
               </div>
-            </div>
-            <div style={{ height: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              {aprDelta && <span style={{ background: '#E8FAF0', color: '#2DB77B', fontSize: '11px', fontWeight: 600, padding: '4px 10px', borderRadius: '14px' }}>{aprDelta}</span>}
-            </div>
-          </div>
-        </div>
 
-        {/* Row 2: Budget Efficiency + Takeaways */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '16px', marginBottom: '32px' }}>
-
-          {/* Budget Efficiency Card */}
-          <div style={{ background: 'linear-gradient(180deg, #F4F3FA 0%, #EEEDF5 100%)', borderRadius: '18px', border: '1px solid rgba(124, 92, 252, 0.08)', boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 6px 20px rgba(0,0,0,0.05)', padding: '24px 24px 22px', position: 'relative', overflow: 'hidden' }}>
-            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'linear-gradient(90deg, #93A3D1 0%, #B8C4E0 100%)' }} />
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '16px' }}>
-              <span style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.07em', color: '#8B8FA3' }}>BUDGET EFFICIENCY</span>
-              <Info size={13} style={{ color: '#C8CBD9' }} />
-            </div>
-            {/* ROAS Sub-panel */}
-            <div style={{ background: 'rgba(255,255,255,0.7)', borderRadius: '12px', padding: '16px 18px', marginBottom: '12px' }}>
-              <div style={{ fontSize: '9px', fontWeight: 600, letterSpacing: '0.06em', color: '#A0A4B8', marginBottom: '8px' }}>ROAS</div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                <div>
-                  <span style={{ fontSize: '28px', fontWeight: 700, color: '#1A1D2E' }}>3.2x</span>
-                  <span style={{ fontSize: '12px', color: '#A0A4B8' }}> / </span>
-                  <span style={{ fontSize: '12px', fontWeight: 700, color: '#6B6F85' }}>3.5x</span>
-                  <span style={{ fontSize: '12px', color: '#A0A4B8' }}> target</span>
-                </div>
-                <div style={{ color: '#F59E0B' }}>
-                  <AlertTriangle size={20} />
-                </div>
-              </div>
-            </div>
-            {/* SPEND Sub-panel */}
-            <div style={{ background: 'rgba(255,255,255,0.7)', borderRadius: '12px', padding: '16px 18px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '10px' }}>
-                <span style={{ fontSize: '9px', fontWeight: 600, letterSpacing: '0.06em', color: '#A0A4B8' }}>SPEND</span>
-                <div>
-                  <span style={{ fontSize: '14px', fontWeight: 700, color: '#1A1D2E' }}>$142K</span>
-                  <span style={{ fontSize: '12px', color: '#6B6F85' }}> / $500K</span>
-                </div>
-              </div>
-              <div style={{ height: '8px', background: '#E4E3ED', borderRadius: '5px', overflow: 'hidden', marginBottom: '4px' }}>
-                <div style={{ width: '28%', height: '100%', background: 'linear-gradient(90deg, #7C5CFC 0%, #A78BFA 100%)', borderRadius: '5px' }} />
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px' }}>
-                <span style={{ color: '#7C5CFC', fontWeight: 600 }}>28% spent</span>
-                <span style={{ color: '#A0A4B8' }}>72% remaining</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Takeaways Card: Key Campaign Insights + Top 3 Opportunities */}
-          <div style={{ background: '#FFFFFF', borderRadius: '18px', border: '1px solid rgba(0,0,0,0.04)', boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 6px 20px rgba(0,0,0,0.05)', padding: '24px 28px 20px', position: 'relative', overflow: 'hidden', display: 'flex', gap: '40px' }}>
-            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'linear-gradient(90deg, #7C5CFC 0%, #A78BFA 100%)' }} />
-            {/* Key Campaign Insights */}
-            <div style={{ flex: 1 }}>
-              <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#1A1D2E', marginBottom: '14px', marginTop: 0 }}>Key Campaign Insights</h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                {insights.map((text, i) => (
-                  <div key={i} style={{ display: 'flex', gap: '10px', alignItems: 'start' }}>
-                    <div style={{ width: '6px', height: '6px', background: '#7C5CFC', marginTop: '6px', flexShrink: 0 }} />
-                    <span style={{ fontSize: '13px', color: '#4A4D5E', lineHeight: '1.4' }}>{text}</span>
+              {/* Card 2: Cost per QR (CpQR) */}
+              <div style={{ flex: '1 1 0', minWidth: '160px', background: '#FFFFFF', borderRadius: '18px', border: '1px solid rgba(0,0,0,0.04)', boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 6px 20px rgba(0,0,0,0.05)', padding: '24px 20px 20px', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'linear-gradient(90deg, #7C5CFC 0%, #A78BFA 100%)' }} />
+                <div style={{ height: '44px', display: 'flex', alignItems: 'start', paddingTop: '4px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <span style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.07em', color: '#8B8FA3' }}>COST PER QR (CpQR)</span>
+                    <Info size={13} style={{ color: '#C8CBD9' }} />
                   </div>
-                ))}
-              </div>
-            </div>
-            {/* Divider */}
-            <div style={{ width: '1px', background: '#EEEDF5', alignSelf: 'stretch' }} />
-            {/* Top 3 Opportunities */}
-            <div style={{ flex: 1 }}>
-              <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#1A1D2E', marginBottom: '14px', marginTop: 0 }}>Top 3 Opportunities</h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                {opportunities.map((text, i) => (
-                  <div key={i} style={{ display: 'flex', gap: '10px', alignItems: 'start' }}>
-                    <div style={{ width: '6px', height: '6px', background: '#7C5CFC', marginTop: '6px', flexShrink: 0 }} />
-                    <span style={{ fontSize: '13px', color: '#4A4D5E', lineHeight: '1.4' }}>{text}</span>
+                </div>
+                <div style={{ height: '52px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                  <span style={{ fontSize: '28px', fontWeight: 700, color: '#1A1D2E' }}>{cpqrValue}</span>
+                  {cpqrIsBelow
+                    ? <ArrowDown size={18} style={{ color: '#2DB77B' }} />
+                    : <ArrowUp size={18} style={{ color: '#E5484D' }} />
+                  }
+                </div>
+                <div style={{ height: '60px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'start', paddingTop: '4px' }}>
+                  <div>
+                    <span style={{ fontSize: '12px', color: '#A0A4B8' }}>target </span>
+                    <span style={{ fontSize: '13px', fontWeight: 700, color: '#1A1D2E' }}>{cpqrTargetVal}</span>
                   </div>
-                ))}
+                </div>
+                <div style={{ height: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {cpqrDelta && <span style={{ background: cpqrIsBelow ? '#E8FAF0' : '#FDEDF0', color: cpqrIsBelow ? '#2DB77B' : '#E5484D', fontSize: '11px', fontWeight: 600, padding: '4px 10px', borderRadius: '14px' }}>{cpqrDelta}</span>}
+                </div>
+              </div>
+
+              {/* Card 3: Share of Voice (SOV) */}
+              <div style={{ flex: '1 1 0', minWidth: '160px', background: '#FFFFFF', borderRadius: '18px', border: '1px solid rgba(0,0,0,0.04)', boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 6px 20px rgba(0,0,0,0.05)', padding: '24px 20px 20px', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'linear-gradient(90deg, #7C5CFC 0%, #A78BFA 100%)' }} />
+                <div style={{ height: '44px', display: 'flex', alignItems: 'start', paddingTop: '4px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <span style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.07em', color: '#8B8FA3' }}>SHARE OF VOICE (SOV)</span>
+                    <Info size={13} style={{ color: '#C8CBD9' }} />
+                  </div>
+                </div>
+                <div style={{ height: '52px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '3px' }}>
+                  <div style={{ fontSize: '28px', fontWeight: 700, color: '#1A1D2E' }}>{qrrPercent}%</div>
+                  <div style={{ fontSize: '11px', color: '#A0A4B8' }}>qualified reach</div>
+                </div>
+                <div style={{ height: '60px', display: 'flex', flexDirection: 'column', justifyContent: 'start', paddingTop: '4px' }}>
+                  <div style={{ position: 'relative', marginBottom: '8px' }}>
+                    <div style={{ display: 'flex', gap: '3px' }}>
+                      {[
+                        { color: '#E5484D', threshold: 20 },
+                        { color: '#F59E0B', threshold: 40 },
+                        { color: '#EAB308', threshold: 60 },
+                        { color: '#22C55E', threshold: 80 },
+                        { color: '#10B981', threshold: 100 },
+                      ].map((seg, i) => (
+                        <div key={i} style={{ flex: 1, height: '8px', background: seg.color, opacity: qrrPercent >= seg.threshold ? 1 : 0.25, borderRadius: i === 0 ? '4px 0 0 4px' : i === 4 ? '0 4px 4px 0' : '0' }} />
+                      ))}
+                    </div>
+                    <div style={{ position: 'absolute', left: `${qrrPercent}%`, top: '8px', transform: 'translateX(-50%)', width: 0, height: 0, borderLeft: '4px solid transparent', borderRight: '4px solid transparent', borderTop: '6px solid #1A1D2E' }} />
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9px', color: '#C8CBD9' }}>
+                    <span>0%</span><span>50%</span><span>100%</span>
+                  </div>
+                </div>
+                <div style={{ height: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {qrrDelta && <span style={{ background: '#E8FAF0', color: '#2DB77B', fontSize: '11px', fontWeight: 600, padding: '4px 10px', borderRadius: '14px' }}>{qrrDelta}</span>}
+                </div>
+              </div>
+
+              {/* Card 4: Audience Penetration Rate (APR) */}
+              <div style={{ flex: '1 1 0', minWidth: '160px', background: '#FFFFFF', borderRadius: '18px', border: '1px solid rgba(0,0,0,0.04)', boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 6px 20px rgba(0,0,0,0.05)', padding: '24px 20px 20px', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'linear-gradient(90deg, #7C5CFC 0%, #A78BFA 100%)' }} />
+                <div style={{ height: '44px', display: 'flex', alignItems: 'start', paddingTop: '4px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <span style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.07em', color: '#8B8FA3' }}>AUDIENCE PENETRATION (APR)</span>
+                    <Info size={13} style={{ color: '#C8CBD9' }} />
+                  </div>
+                </div>
+                <div style={{ height: '52px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                  <span style={{ fontSize: '28px', fontWeight: 700, color: '#1A1D2E' }}>{aprValue}</span>
+                  <span style={{ fontSize: '12px', fontWeight: 500, color: '#A0A4B8' }}>penetration</span>
+                </div>
+                <div style={{ height: '60px', display: 'flex', flexDirection: 'column', justifyContent: 'start', gap: '6px', paddingTop: '4px' }}>
+                  <div style={{ textAlign: 'center' }}>
+                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#1A1D2E' }}>252K</span>
+                    <span style={{ fontSize: '11px', color: '#A0A4B8' }}> of </span>
+                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#1A1D2E' }}>1.4M</span>
+                    <span style={{ fontSize: '11px', color: '#A0A4B8' }}> ICP</span>
+                  </div>
+                  <div>
+                    <div style={{ position: 'relative', height: '8px', background: '#EEEDF5', borderRadius: '5px', overflow: 'hidden', marginBottom: '4px' }}>
+                      <div style={{ width: `${aprPercent}%`, height: '100%', background: 'linear-gradient(90deg, #7C5CFC 0%, #A78BFA 100%)', borderRadius: '5px', boxShadow: '0 0 8px rgba(124, 92, 252, 0.2)' }} />
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9px' }}>
+                      <span style={{ color: '#7C5CFC', fontWeight: 600 }}>Reached 252K</span>
+                      <span style={{ color: '#C8CBD9' }}>Untapped 1.1M</span>
+                    </div>
+                  </div>
+                </div>
+                <div style={{ height: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {aprDelta && <span style={{ background: '#E8FAF0', color: '#2DB77B', fontSize: '11px', fontWeight: 600, padding: '4px 10px', borderRadius: '14px' }}>{aprDelta}</span>}
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-        </>
+
+            {/* Row 2: Budget Efficiency + Takeaways */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '16px', marginBottom: '32px' }}>
+
+              {/* Budget Efficiency Card */}
+              <div style={{ background: 'linear-gradient(180deg, #F4F3FA 0%, #EEEDF5 100%)', borderRadius: '18px', border: '1px solid rgba(124, 92, 252, 0.08)', boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 6px 20px rgba(0,0,0,0.05)', padding: '24px 24px 22px', position: 'relative', overflow: 'hidden' }}>
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'linear-gradient(90deg, #93A3D1 0%, #B8C4E0 100%)' }} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '16px' }}>
+                  <span style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.07em', color: '#8B8FA3' }}>BUDGET EFFICIENCY</span>
+                  <Info size={13} style={{ color: '#C8CBD9' }} />
+                </div>
+                {/* ROAS Sub-panel */}
+                <div style={{ background: 'rgba(255,255,255,0.7)', borderRadius: '12px', padding: '16px 18px', marginBottom: '12px' }}>
+                  <div style={{ fontSize: '9px', fontWeight: 600, letterSpacing: '0.06em', color: '#A0A4B8', marginBottom: '8px' }}>ROAS</div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                    <div>
+                      <span style={{ fontSize: '28px', fontWeight: 700, color: '#1A1D2E' }}>3.2x</span>
+                      <span style={{ fontSize: '12px', color: '#A0A4B8' }}> / </span>
+                      <span style={{ fontSize: '12px', fontWeight: 700, color: '#6B6F85' }}>3.5x</span>
+                      <span style={{ fontSize: '12px', color: '#A0A4B8' }}> target</span>
+                    </div>
+                    <div style={{ color: '#F59E0B' }}>
+                      <AlertTriangle size={20} />
+                    </div>
+                  </div>
+                </div>
+                {/* SPEND Sub-panel */}
+                <div style={{ background: 'rgba(255,255,255,0.7)', borderRadius: '12px', padding: '16px 18px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '10px' }}>
+                    <span style={{ fontSize: '9px', fontWeight: 600, letterSpacing: '0.06em', color: '#A0A4B8' }}>SPEND</span>
+                    <div>
+                      <span style={{ fontSize: '14px', fontWeight: 700, color: '#1A1D2E' }}>$142K</span>
+                      <span style={{ fontSize: '12px', color: '#6B6F85' }}> / $500K</span>
+                    </div>
+                  </div>
+                  <div style={{ height: '8px', background: '#E4E3ED', borderRadius: '5px', overflow: 'hidden', marginBottom: '4px' }}>
+                    <div style={{ width: '28%', height: '100%', background: 'linear-gradient(90deg, #7C5CFC 0%, #A78BFA 100%)', borderRadius: '5px' }} />
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px' }}>
+                    <span style={{ color: '#7C5CFC', fontWeight: 600 }}>28% spent</span>
+                    <span style={{ color: '#A0A4B8' }}>72% remaining</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Takeaways Card: Key Campaign Insights + Top 3 Opportunities */}
+              <div style={{ background: '#FFFFFF', borderRadius: '18px', border: '1px solid rgba(0,0,0,0.04)', boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 6px 20px rgba(0,0,0,0.05)', padding: '24px 28px 20px', position: 'relative', overflow: 'hidden', display: 'flex', gap: '40px' }}>
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'linear-gradient(90deg, #7C5CFC 0%, #A78BFA 100%)' }} />
+                {/* Key Campaign Insights */}
+                <div style={{ flex: 1 }}>
+                  <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#1A1D2E', marginBottom: '14px', marginTop: 0 }}>Key Campaign Insights</h3>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    {insights.map((text, i) => (
+                      <div key={i} style={{ display: 'flex', gap: '10px', alignItems: 'start' }}>
+                        <div style={{ width: '6px', height: '6px', background: '#7C5CFC', marginTop: '6px', flexShrink: 0 }} />
+                        <span style={{ fontSize: '13px', color: '#4A4D5E', lineHeight: '1.4' }}>{text}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                {/* Divider */}
+                <div style={{ width: '1px', background: '#EEEDF5', alignSelf: 'stretch' }} />
+                {/* Top 3 Opportunities */}
+                <div style={{ flex: 1 }}>
+                  <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#1A1D2E', marginBottom: '14px', marginTop: 0 }}>Top 3 Opportunities</h3>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    {opportunities.map((text, i) => (
+                      <div key={i} style={{ display: 'flex', gap: '10px', alignItems: 'start' }}>
+                        <div style={{ width: '6px', height: '6px', background: '#7C5CFC', marginTop: '6px', flexShrink: 0 }} />
+                        <span style={{ fontSize: '13px', color: '#4A4D5E', lineHeight: '1.4' }}>{text}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>
         )}
 
         {/* The REACT Framework Header */}

@@ -147,7 +147,7 @@ export interface ReachChannelRow {
     tooltip?: string;
   };
   qualified_reach: ReachMetricValue;
-  qualified_reach_ratio?: ReachMetricValue;
+  share_of_voice?: ReachMetricValue;
   cost_per_qualified_reach?: ReachMetricValue;
 }
 
@@ -169,7 +169,7 @@ export interface ReachExpandedData {
     mobile: number;
   };
   qualified_reach?: ReachMetricValue;
-  qualified_reach_ratio?: ReachMetricValue;
+  share_of_voice?: ReachMetricValue;
   cost_per_qualified_reach?: ReachMetricValue;
   channels?: ReachChannelRow[];
 }
@@ -199,7 +199,7 @@ export interface EngageExpandedData {
     note?: string;
   };
   engagement_quality_score: {
-    value: number;
+    value: number | null;
     value_raw_model?: number;
     channels: ChannelScore[];
     available?: boolean;
@@ -221,7 +221,7 @@ export interface EngageExpandedData {
     note?: string;
   };
   cost_per_engagement: {
-    average: string;
+    average: string | null;
     cpqe_average?: string;
     cpe_value?: number | null;
     cpqe_value?: number | null;

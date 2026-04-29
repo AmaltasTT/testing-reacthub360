@@ -10,7 +10,7 @@ export function SnapshotRow() {
   const goalsData = [
     { label: "Qualified Reach", value: 0.98, displayText: "98% of target" },
     {
-      label: "Qualified Reach Rate",
+      label: "Share of Voice (SOV)",
       value: totals.qrr,
       displayText: fmtPct(totals.qrr),
     },
@@ -24,7 +24,7 @@ export function SnapshotRow() {
   // Define period metrics
   const periodMetrics = [
     {
-      label: "QRR",
+      label: "SOV",
       change: "+5pts",
       changeColor: P.accent,
       value: fmtPct(totals.qrr),
