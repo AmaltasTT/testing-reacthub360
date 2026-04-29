@@ -1,0 +1,1023 @@
+/* Scoped LaunchIQ v7 surface — used inside .launchiq-root */
+.launchiq-root {
+  --font-launchiq-sans: "DM Sans", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-launchiq-mono: "DM Mono", "SFMono-Regular", Consolas, "Liberation Mono", ui-monospace, monospace;
+  --font-launchiq-serif: "Instrument Serif", Georgia, Cambria, "Times New Roman", ui-serif, serif;
+  --launchiq-brand: #6366f1;
+  --launchiq-brand-dk: #4f46e5;
+  --launchiq-d1: #1d1d1f;
+  --launchiq-d2: #6e6e73;
+  --launchiq-d3: #aeaeb2;
+  --launchiq-l4: #fafafe;
+  --launchiq-glass: rgba(255, 255, 255, 0.65);
+  --launchiq-glass-strong: rgba(255, 255, 255, 0.8);
+  --launchiq-glass-border: rgba(255, 255, 255, 0.45);
+  --launchiq-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --launchiq-ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+  color: var(--launchiq-d1);
+  background-color: var(--launchiq-l4);
+  background-image: radial-gradient(
+    ellipse 80% 60% at 50% 0%,
+    rgba(99, 102, 241, 0.05),
+    transparent 70%
+  );
+  font-family: var(--font-launchiq-sans);
+}
+
+.launchiq-root ::selection {
+  background: #e0ddff;
+  color: var(--launchiq-d1);
+}
+
+.launchiq-mono {
+  font-family: var(--font-launchiq-mono), ui-monospace, monospace;
+}
+
+.launchiq-serif-italic {
+  font-family: var(--font-launchiq-serif), ui-serif, Georgia, serif;
+  font-style: italic;
+}
+
+/* Goal icon inner light */
+.launchiq-goal-icon-wrap {
+  position: relative;
+}
+.launchiq-goal-icon-wrap::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: 15px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.25), transparent 60%);
+  pointer-events: none;
+}
+
+.launchiq-ch-campaigns::-webkit-scrollbar {
+  width: 2px;
+}
+.launchiq-ch-campaigns::-webkit-scrollbar-thumb {
+  background: var(--launchiq-brand);
+  border-radius: 2px;
+}
+
+@keyframes launchiq-enter {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.launchiq-screen-enter {
+  animation: launchiq-enter 0.7s var(--launchiq-ease) both;
+}
+
+/* ─── Metrics overlay (LaunchIQ_v7.html parity) ─── */
+.launchiq-ov-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: launchiq-ov-fade-in 0.25s var(--launchiq-ease) both;
+}
+
+@keyframes launchiq-ov-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.launchiq-ov-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(16px);
+}
+
+.launchiq-ov-panel {
+  position: relative;
+  width: 540px;
+  max-width: calc(100vw - 32px);
+  max-height: 85vh;
+  overflow-y: auto;
+  background: #ffffff;
+  border-radius: 28px;
+  padding: 44px 40px;
+  box-shadow:
+    0 40px 120px rgba(0, 0, 0, 0.12),
+    0 0 0 1px rgba(255, 255, 255, 0.5);
+  animation: launchiq-ov-slide-up 0.4s var(--launchiq-spring) both;
+}
+
+.launchiq-ov-panel::-webkit-scrollbar {
+  width: 0;
+}
+
+@keyframes launchiq-ov-slide-up {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+.launchiq-ov-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  font-size: 17px;
+  color: #94a3b8;
+  transition: all 0.15s;
+}
+
+.launchiq-ov-close:hover {
+  background: #94a3b8;
+  color: #ffffff;
+}
+
+.launchiq-ov-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.8px;
+  margin-bottom: 4px;
+}
+
+.launchiq-ov-sub {
+  font-size: 14px;
+  font-weight: 300;
+  color: #475569;
+  line-height: 1.5;
+  margin-bottom: 32px;
+}
+
+.launchiq-ov-sub strong {
+  font-weight: 500;
+  color: #0f172a;
+}
+
+.launchiq-ov-mrow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.04);
+}
+
+.launchiq-ov-mrow:last-child {
+  border-bottom: none;
+}
+
+.launchiq-ov-mrow-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #0f172a;
+}
+
+.launchiq-ov-mrow-hint {
+  font-size: 11px;
+  font-weight: 300;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+.launchiq-ov-mrow-input-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 2px;
+  min-width: 120px;
+  max-width: 160px;
+  padding: 10px 8px 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  background: #f1f5f9;
+  transition: all 0.3s var(--launchiq-spring);
+}
+
+.launchiq-ov-mrow-input-wrap:focus-within {
+  border-color: #7c3aed;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.08);
+}
+
+.launchiq-ov-mrow-pref,
+.launchiq-ov-mrow-suf {
+  font-size: 18px;
+  font-weight: 600;
+  color: #0f172a;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.launchiq-ov-mrow-input {
+  flex: 1;
+  min-width: 0;
+  width: auto;
+  padding: 2px 4px;
+  border: none;
+  border-radius: 0;
+  font-size: 18px;
+  font-weight: 600;
+  font-family: inherit;
+  color: #0f172a;
+  background: transparent;
+  text-align: right;
+  transition: color 0.2s;
+}
+
+.launchiq-ov-mrow-input:focus {
+  outline: none;
+}
+
+.launchiq-ov-mrow-input::placeholder {
+  color: #94a3b8;
+  font-weight: 300;
+}
+
+.launchiq-ov-layer {
+  margin-top: 24px;
+}
+
+.launchiq-ov-layer-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 0;
+  border-top: 1px solid #f1f5f9;
+  cursor: pointer;
+}
+
+.launchiq-ov-layer-t {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0f172a;
+  flex: 1;
+}
+
+.launchiq-ov-layer-arrow {
+  font-size: 13px;
+  color: #7c3aed;
+  transition: transform 0.2s;
+  font-weight: 600;
+}
+
+.launchiq-ov-layer-head[data-open="true"] .launchiq-ov-layer-arrow {
+  transform: rotate(180deg);
+}
+
+.launchiq-ov-layer-body {
+  display: none;
+  padding: 0 0 16px;
+}
+
+.launchiq-ov-layer-body[data-open="true"] {
+  display: block;
+  animation: launchiq-ov-enter 0.3s var(--launchiq-ease) both;
+}
+
+@keyframes launchiq-ov-enter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.launchiq-ov-ctx-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 24px;
+}
+
+.launchiq-ov-ctx-grid .launchiq-ov-span-2 {
+  grid-column: 1 / -1;
+}
+
+.launchiq-ov-ctx-v {
+  font-size: 14px;
+  font-weight: 500;
+  color: #0f172a;
+}
+
+.launchiq-ov-ctx-l {
+  font-size: 10px;
+  font-weight: 500;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-bottom: 3px;
+}
+
+.launchiq-ov-ctx-inp {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  color: #0f172a;
+  background: #f1f5f9;
+  transition: border-color 0.2s;
+}
+
+.launchiq-ov-ctx-inp:focus {
+  outline: none;
+  border-color: #7c3aed;
+  background: #ffffff;
+}
+
+.launchiq-ov-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.launchiq-ov-chip {
+  padding: 8px 18px;
+  border-radius: 24px;
+  font-size: 12px;
+  font-weight: 500;
+  background: #f1f5f9;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.25s var(--launchiq-spring);
+  border: 1.5px solid transparent;
+}
+
+.launchiq-ov-chip:hover {
+  background: rgba(124, 58, 237, 0.06);
+  border-color: rgba(124, 58, 237, 0.1);
+}
+
+.launchiq-ov-chip[data-on="true"] {
+  background: #7c3aed;
+  color: #ffffff;
+  border-color: #7c3aed;
+  box-shadow: 0 3px 10px rgba(124, 58, 237, 0.2);
+}
+
+.launchiq-ov-tag-input {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 10px 14px;
+  background: #f1f5f9;
+  border-radius: 10px;
+  min-height: 42px;
+  align-items: center;
+  margin-top: 8px;
+  border: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+
+.launchiq-ov-tag-input:focus-within {
+  border-color: #7c3aed;
+  background: #ffffff;
+}
+
+.launchiq-ov-tag-input input {
+  border: none;
+  outline: none;
+  font-size: 13px;
+  font-family: inherit;
+  color: #0f172a;
+  flex: 1;
+  min-width: 80px;
+  background: transparent;
+}
+
+.launchiq-ov-tag-input input::placeholder {
+  color: #94a3b8;
+}
+
+.launchiq-ov-tag-pill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  background: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  color: #0f172a;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 500;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.launchiq-ov-tag-pill button {
+  cursor: pointer;
+  color: #94a3b8;
+  line-height: 1;
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 12px;
+}
+
+.launchiq-ov-nudge {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 300;
+  margin-top: 14px;
+  line-height: 1.5;
+}
+
+.launchiq-ov-nudge-icon {
+  display: none;
+  flex-shrink: 0;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.launchiq-ov-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 32px;
+}
+
+.launchiq-ov-btn-s {
+  flex: 1;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 14px 24px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  color: #475569;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.35s var(--launchiq-spring);
+}
+
+.launchiq-ov-btn-s:hover {
+  background: #f1f5f9;
+}
+
+.launchiq-ov-btn-p {
+  flex: 1;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 16px;
+  border-radius: 18px;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  color: #ffffff;
+  background: linear-gradient(90deg, #7c3aed, #9333ea, #7c3aed);
+  box-shadow: 0 6px 24px rgba(124, 58, 237, 0.2);
+  transition: all 0.35s var(--launchiq-spring);
+}
+
+.launchiq-ov-btn-p:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(124, 58, 237, 0.25);
+}
+
+/* ─── Review screen — channel cards (LaunchIQ_v7.html .ch-row / .ch-ck / .ch-more) ─── */
+.launchiq-review-ch-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.launchiq-review-ch-block {
+  margin-bottom: 0;
+}
+
+.launchiq-review-ch-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 74px;
+  padding: 14px 20px;
+  border-radius: 14px;
+  background: var(--launchiq-glass-strong);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--launchiq-glass-border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  transition:
+    transform 0.25s var(--launchiq-ease),
+    box-shadow 0.25s var(--launchiq-ease);
+}
+
+.launchiq-review-ch-row:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+}
+
+.launchiq-review-ch-ck {
+  width: 22px;
+  height: 22px;
+  border-radius: 8px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s var(--launchiq-spring);
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.launchiq-review-ch-ck[data-on="true"] {
+  background: var(--launchiq-brand);
+  color: #ffffff;
+  box-shadow: 0 3px 8px rgba(99, 102, 241, 0.2);
+  border: 1px solid transparent;
+}
+
+.launchiq-review-ch-ck[data-on="false"] {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: transparent;
+  box-shadow: none;
+}
+
+.launchiq-review-ch-ic {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(145deg, rgba(124, 58, 237, 0.12), rgba(124, 58, 237, 0.04));
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  color: var(--launchiq-brand);
+  font-size: 18px;
+  line-height: 1;
+  overflow: hidden;
+}
+
+.launchiq-review-ch-ic-img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  display: block;
+}
+
+.launchiq-review-ch-inf {
+  flex: 1;
+  min-width: 0;
+}
+
+.launchiq-review-ch-nm {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--launchiq-d1);
+}
+
+.launchiq-review-ch-ct {
+  font-size: 11px;
+  font-weight: 300;
+  color: var(--launchiq-d3);
+  margin-top: 3px;
+  line-height: 1.35;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.launchiq-review-ch-ct[data-clickable="true"] {
+  cursor: pointer;
+  border-radius: 4px;
+  margin-left: -4px;
+  margin-right: -4px;
+  padding-left: 4px;
+  padding-right: 4px;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.launchiq-review-ch-ct[data-clickable="true"]:hover {
+  color: var(--launchiq-d2);
+  background: rgba(99, 102, 241, 0.06);
+}
+
+.launchiq-review-ch-pill {
+  font-family: var(--font-launchiq-mono), ui-monospace, monospace;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--launchiq-brand);
+  flex-shrink: 0;
+  min-width: 1.5rem;
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+.launchiq-review-ch-pill[data-zr="true"] {
+  color: var(--launchiq-d3);
+}
+
+.launchiq-review-ch-arrow {
+  font-size: 14px;
+  color: var(--launchiq-d3);
+  transition: transform 0.25s var(--launchiq-spring);
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.launchiq-review-ch-arrow[data-open="true"] {
+  transform: rotate(90deg);
+  color: var(--launchiq-brand);
+}
+
+.launchiq-review-ch-more {
+  padding: 14px 0;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--launchiq-brand);
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: inherit;
+  width: 100%;
+  transition: opacity 0.15s;
+}
+
+.launchiq-review-ch-more:hover {
+  opacity: 0.6;
+}
+
+.launchiq-review-cp-wrap {
+  margin-top: 4px;
+}
+
+.launchiq-review-cp-block {
+  margin-bottom: 12px;
+}
+
+.launchiq-review-cp-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 10px;
+  margin-bottom: 6px;
+}
+
+.launchiq-review-cp-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: #1d1d1f;
+}
+
+.launchiq-review-cp-id {
+  font-size: 11px;
+  font-weight: 400;
+  color: #aeaeb2;
+  font-variant-numeric: tabular-nums;
+}
+
+.launchiq-review-cp-status {
+  margin: 0;
+  padding: 6px 0 4px;
+  font-size: 12px;
+  font-weight: 300;
+  color: #aeaeb2;
+}
+
+.launchiq-review-cp-status--err {
+  color: #dc2626;
+}
+
+.launchiq-review-cp-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  background: rgba(255, 255, 255, 0.55);
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.launchiq-review-cp-li {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.launchiq-review-cp-li:last-child {
+  border-bottom: none;
+}
+
+.launchiq-review-cp-label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 6px 10px;
+  padding: 8px 10px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #3a3a3c;
+}
+
+.launchiq-review-cp-label:hover {
+  background: rgba(99, 102, 241, 0.06);
+}
+
+.launchiq-review-cp-cb {
+  margin-top: 2px;
+  flex-shrink: 0;
+  width: 15px;
+  height: 15px;
+  accent-color: #6366f1;
+  cursor: pointer;
+}
+
+.launchiq-review-cp-cname {
+  flex: 1 1 120px;
+  min-width: 0;
+  line-height: 1.35;
+  word-break: break-word;
+}
+
+.launchiq-review-cp-cid {
+  flex: 1 1 100%;
+  margin-left: 25px;
+  font-size: 10px;
+  font-weight: 400;
+  color: #aeaeb2;
+  line-height: 1.3;
+  word-break: break-all;
+}
+
+/* ─── Screen 3: success (LaunchIQ_v7.html #v3) ─── */
+@keyframes launchiq-settle {
+  0% {
+    transform: scale(0);
+  }
+  60% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.launchiq-suc-head {
+  text-align: center;
+  padding-top: 12px;
+}
+
+.launchiq-suc-ring {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  margin: 0 auto 20px;
+  background: linear-gradient(145deg, #818cf8, var(--launchiq-brand));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 16px 48px rgba(99, 102, 241, 0.2);
+  animation: launchiq-settle 0.6s var(--launchiq-spring);
+}
+
+.launchiq-suc-ring svg {
+  width: 36px;
+  height: 36px;
+}
+
+.launchiq-suc-ring path {
+  stroke: #fff;
+  stroke-width: 2.5;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.launchiq-suc-title {
+  text-align: center;
+  font-size: 40px;
+  font-weight: 800;
+  color: var(--launchiq-d1);
+  letter-spacing: -0.02em;
+  line-height: 1.02;
+  margin-bottom: 8px;
+}
+
+.launchiq-suc-sub {
+  text-align: center;
+  max-width: 380px;
+  margin: 0 auto 20px;
+  font-size: 15px;
+  font-weight: 300;
+  color: var(--launchiq-d2);
+  line-height: 1.6;
+}
+
+.launchiq-sum {
+  padding: 28px;
+  margin: 16px 0;
+  border-radius: 20px;
+  background: var(--launchiq-glass-strong);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--launchiq-glass-border);
+  box-shadow: 0 24px 64px rgba(99, 102, 241, 0.08);
+}
+
+.launchiq-sum-nm {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--launchiq-d1);
+  letter-spacing: -0.5px;
+  margin-bottom: 10px;
+}
+
+.launchiq-sum-pills {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.launchiq-sum-pill {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--launchiq-brand);
+  padding: 4px 14px;
+  border-radius: 20px;
+  background: rgba(99, 102, 241, 0.06);
+}
+
+.launchiq-sum-pill--muted {
+  color: var(--launchiq-d2);
+  background: #f5f5f7;
+}
+
+.launchiq-sum-chs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 16px;
+}
+
+.launchiq-sum-ch {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--launchiq-d2);
+  padding: 4px 12px;
+  border-radius: 8px;
+  background: #f5f5f7;
+}
+
+.launchiq-sum-ch strong {
+  color: var(--launchiq-brand);
+  font-weight: 600;
+}
+
+.launchiq-sum-ch strong.launchiq-sum-ch-all {
+  color: var(--launchiq-brand);
+}
+
+.launchiq-smg {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+@media (max-width: 520px) {
+  .launchiq-smg {
+    grid-template-columns: 1fr;
+  }
+}
+
+.launchiq-smc {
+  padding: 20px;
+  border-radius: 14px;
+  background: #f5f5f7;
+}
+
+.launchiq-smc-l {
+  font-family: var(--font-launchiq-mono), ui-monospace, monospace;
+  font-size: 9px;
+  font-weight: 500;
+  color: var(--launchiq-brand);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.launchiq-smc-v {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--launchiq-d1);
+  letter-spacing: -0.03em;
+  line-height: 1.25;
+  word-break: break-word;
+}
+
+.launchiq-init-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 0 0;
+  font-size: 13px;
+  color: var(--launchiq-brand);
+  font-weight: 500;
+}
+
+.launchiq-init-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--launchiq-brand);
+  flex-shrink: 0;
+  animation: launchiq-init-pulse 1.5s ease infinite;
+}
+
+.launchiq-init-dot--steady {
+  animation: none;
+  opacity: 1;
+}
+
+@keyframes launchiq-init-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+.launchiq-suc-acts {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.launchiq-btn-insights {
+  width: 100%;
+  padding: 18px 36px;
+  border-radius: 18px;
+  font-size: 17px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  color: #fff;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  box-shadow: 0 6px 24px rgba(59, 130, 246, 0.2);
+  transition: all 0.35s var(--launchiq-spring);
+}
+
+.launchiq-btn-insights:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(59, 130, 246, 0.25);
+}
+
+.launchiq-btn-create-another {
+  width: 100%;
+  padding: 14px 24px;
+  border-radius: 18px;
+  font-size: 14px;
+  font-weight: 600;
+  border: 1px solid var(--launchiq-glass-border);
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--launchiq-d2);
+  background: var(--launchiq-glass-strong);
+  backdrop-filter: blur(8px);
+  transition: background 0.2s ease;
+}
+
+.launchiq-btn-create-another:hover {
+  background: #f5f5f7;
+}
