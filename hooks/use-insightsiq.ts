@@ -85,18 +85,23 @@ export interface BrandMomentumData {
 // 4. Performance Snapshot — named keys, not an array
 export interface SnapshotMetricCard {
   value: string;
-  delta: string;
-  percentage: number;
+  delta: string | null;
+  percentage: number | null;
   status: string;
+  available?: boolean;
+  note?: string;
 }
 
 export interface PerformanceSnapshotData {
   total_reach: SnapshotMetricCard;
   cost_per_reach: SnapshotMetricCard;
+  share_of_voice: SnapshotMetricCard;
   audience_penetration_rate: SnapshotMetricCard;
   total_spend_vs_roas: SnapshotMetricCard & {
     secondary_value: string;
-    secondary_delta: string;
+    secondary_delta: string | null;
+    secondary_available?: boolean;
+    secondary_note?: string;
   };
 }
 

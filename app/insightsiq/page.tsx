@@ -164,7 +164,7 @@ export default function InsightsIQPage() {
   const [customRange, setCustomRange] = useState<DateRange>({ start: null, end: null });
 
   // Expanded phase state for lazy loading detail APIs
-  const [expandedPhases, setExpandedPhases] = useState<Record<string, boolean>>({ 'Reach': true });
+  const [expandedPhases, setExpandedPhases] = useState<Record<string, boolean>>({});
 
   const urlCampaignId = useMemo(
     () => readCampaignIdFromSearchParams(searchParams),
@@ -264,13 +264,48 @@ export default function InsightsIQPage() {
 
   // Map API phases overview to component format, fall back to fallback
   const phasesData = useMemo(() => {
-    const reachLabelMap: Record<string, string> = {
-      'Total Reach': 'Qualified Reach',
-      'Cost per Reach (CPR)': 'Cost per Qualified Reach (CpQR)',
-      'Engaged Reach': 'Share of Voice (SOV)',
+    const remapReachLabels = (metrics: PhaseMetric[]): PhaseMetric[] => {
+      const reachLabelMap: Record<string, string> = {
+        'Total Reach': 'Qualified Reach',
+        'Cost per Reach (CPR)': 'Cost per Qualified Reach (CpQR)',
+        'Engaged Reach': 'Share of Voice (SOV)',
+        'Share of Voice': 'Share of Voice (SOV)',
+      };
+
+      const formatPercentage = (val: string | number | null | undefined): string | number | null => {
+        if (!val || val === '—') return val as any;
+        const strVal = String(val).trim();
+        const numMatch = strVal.match(/^[-+]?[\d.]+/);
+        if (!numMatch) return val as any;
+        const num = parseFloat(numMatch[0]);
+        if (isNaN(num)) return val as any;
+        return Math.round(num) + '%';
+      };
+
+      // 1. Rename to standardized labels and fix formatting
+      const renamed = metrics.map((m) => {
+        let val = m.value;
+        const newLabel = reachLabelMap[m.label] ?? m.label;
+        if (newLabel === 'Share of Voice (SOV)' || newLabel === 'Audience Penetration Rate') {
+          val = formatPercentage(val);
+        }
+        return { ...m, label: newLabel, value: val };
+      });
+
+      // 2. Deduplicate metrics (e.g. if 'Engaged Reach' and 'Share of Voice' are both sent)
+      const seen = new Set();
+      const deduplicated = renamed.filter(m => {
+        if (seen.has(m.label)) return false;
+        seen.add(m.label);
+        return true;
+      });
+
+      // 3. Keep only the 4 desired metrics in the correct order
+      const desiredOrder = ['Qualified Reach', 'Cost per Qualified Reach (CpQR)', 'Share of Voice (SOV)', 'Audience Penetration Rate'];
+      const finalMetrics = desiredOrder.map(label => deduplicated.find(m => m.label === label)).filter(Boolean) as PhaseMetric[];
+
+      return finalMetrics.length > 0 ? finalMetrics : deduplicated.slice(0, 4);
     };
-    const remapReachLabels = (metrics: PhaseMetric[]): PhaseMetric[] =>
-      metrics.map((m) => ({ ...m, label: reachLabelMap[m.label] ?? m.label }));
     const phases = phasesOverview?.phases;
     if (!phases || phases.length === 0) return fallbackPhasesData;
 
@@ -300,24 +335,54 @@ export default function InsightsIQPage() {
 
   const isSnapshotSectionLoading = isSnapshotPending || isKeyInsightsPending;
 
+  const formatCompact = (val: string | number | null | undefined): string => {
+    if (!val || val === '—') return '—';
+    const strVal = String(val).trim();
+    if (/[KMB%\$]/i.test(strVal)) return strVal;
+    const num = Number(strVal.replace(/,/g, ''));
+    if (isNaN(num)) return strVal;
+    if (num >= 1000000) return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+    if (num >= 1000) return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+    return String(num);
+  };
+
+  const formatPercentageSnapshot = (val: string | number | null | undefined): string => {
+    if (!val || val === '—') return '—';
+    const strVal = String(val).trim();
+    const numMatch = strVal.match(/^[-+]?[\d.]+/);
+    if (!numMatch) return strVal;
+    const num = parseFloat(numMatch[0]);
+    if (isNaN(num)) return strVal;
+    return Math.round(num) + '%';
+  };
+
   // QR Card data — maps to total_reach
   const qrPercent = snapshot?.total_reach?.percentage ?? 0;
-  const qrValue = snapshot?.total_reach?.value ?? '—';
+  const qrValue = formatCompact(snapshot?.total_reach?.value ?? '—');
   const qrDelta = snapshot?.total_reach?.delta ?? null;
 
-  // CpQR Card data — maps to cost_per_reach; target from total_spend_vs_roas
+  // CpQR Card data
   const cpqrValue = snapshot?.cost_per_reach?.value ?? '—';
-  const cpqrTargetVal = snapshot?.total_spend_vs_roas?.secondary_value ?? '—';
+  const cpqrTargetVal = '—'; // Target is not provided in API yet
   const cpqrDelta = snapshot?.cost_per_reach?.delta ?? null;
   const cpqrIsBelow = !!(cpqrDelta && (cpqrDelta.startsWith('-') || cpqrDelta.startsWith('−')));
 
-  // SOV Card data — uses total_reach percentage (% of target reached)
-  const qrrPercent = snapshot?.total_reach?.percentage ?? 0;
-  const qrrDelta = snapshot?.total_reach?.delta ?? null;
+  // SOV Card data — uses share_of_voice
+  const sovValue = formatPercentageSnapshot(snapshot?.share_of_voice?.value ?? '—');
+  const qrrPercent = snapshot?.share_of_voice?.percentage ?? 0;
+  const qrrDelta = snapshot?.share_of_voice?.delta ?? null;
+
+  // Budget Efficiency data
+  const roasValue = snapshot?.total_spend_vs_roas?.secondary_value ?? '—';
+  const roasDelta = snapshot?.total_spend_vs_roas?.secondary_delta ?? null;
+  const roasAvailable = snapshot?.total_spend_vs_roas?.secondary_available ?? true;
+  const roasNote = snapshot?.total_spend_vs_roas?.secondary_note ?? '';
+  const spendValue = snapshot?.total_spend_vs_roas?.value ?? '—';
+  const spendPercent = snapshot?.total_spend_vs_roas?.percentage ?? 0;
 
   // APR Card data — maps to audience_penetration_rate
   const aprPercent = snapshot?.audience_penetration_rate?.percentage ?? 0;
-  const aprValue = snapshot?.audience_penetration_rate?.value ?? '—';
+  const aprValue = formatPercentageSnapshot(snapshot?.audience_penetration_rate?.value ?? '—');
   const aprDelta = snapshot?.audience_penetration_rate?.delta ?? null;
 
   // Key insights — API returns key_insights / top_opportunities
@@ -495,7 +560,7 @@ export default function InsightsIQPage() {
                   </div>
                 </div>
                 <div style={{ height: '52px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '3px' }}>
-                  <div style={{ fontSize: '28px', fontWeight: 700, color: '#1A1D2E' }}>{qrrPercent}%</div>
+                  <div style={{ fontSize: '28px', fontWeight: 700, color: '#1A1D2E' }}>{sovValue}</div>
                   <div style={{ fontSize: '11px', color: '#A0A4B8' }}>qualified reach</div>
                 </div>
                 <div style={{ height: '60px', display: 'flex', flexDirection: 'column', justifyContent: 'start', paddingTop: '4px' }}>
@@ -573,13 +638,19 @@ export default function InsightsIQPage() {
                   <div style={{ fontSize: '9px', fontWeight: 600, letterSpacing: '0.06em', color: '#A0A4B8', marginBottom: '8px' }}>ROAS</div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
                     <div>
-                      <span style={{ fontSize: '28px', fontWeight: 700, color: '#1A1D2E' }}>3.2x</span>
-                      <span style={{ fontSize: '12px', color: '#A0A4B8' }}> / </span>
-                      <span style={{ fontSize: '12px', fontWeight: 700, color: '#6B6F85' }}>3.5x</span>
-                      <span style={{ fontSize: '12px', color: '#A0A4B8' }}> target</span>
+                      <span style={{ fontSize: '28px', fontWeight: 700, color: '#1A1D2E' }}>{roasValue}</span>
+                      {roasAvailable && roasValue !== '—' && (
+                        <span style={{ fontSize: '13px', fontWeight: 500, color: '#A0A4B8', marginLeft: '6px' }}>/ 3.5x target</span>
+                      )}
                     </div>
-                    <div style={{ color: '#F59E0B' }}>
-                      <AlertTriangle size={20} />
+                    <div style={{ color: roasAvailable ? '#10B981' : '#F59E0B' }} title={roasNote}>
+                      {!roasAvailable ? (
+                        <AlertTriangle size={20} />
+                      ) : roasDelta ? (
+                        <span style={{ fontSize: '13px', fontWeight: 600, background: 'rgba(16,185,129,0.1)', padding: '2px 8px', borderRadius: '12px' }}>
+                          {roasDelta}
+                        </span>
+                      ) : null}
                     </div>
                   </div>
                 </div>
@@ -588,16 +659,15 @@ export default function InsightsIQPage() {
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '10px' }}>
                     <span style={{ fontSize: '9px', fontWeight: 600, letterSpacing: '0.06em', color: '#A0A4B8' }}>SPEND</span>
                     <div>
-                      <span style={{ fontSize: '14px', fontWeight: 700, color: '#1A1D2E' }}>$142K</span>
-                      <span style={{ fontSize: '12px', color: '#6B6F85' }}> / $500K</span>
+                      <span style={{ fontSize: '14px', fontWeight: 700, color: '#1A1D2E' }}>{spendValue}</span>
                     </div>
                   </div>
                   <div style={{ height: '8px', background: '#E4E3ED', borderRadius: '5px', overflow: 'hidden', marginBottom: '4px' }}>
-                    <div style={{ width: '28%', height: '100%', background: 'linear-gradient(90deg, #7C5CFC 0%, #A78BFA 100%)', borderRadius: '5px' }} />
+                    <div style={{ width: `${spendPercent}%`, height: '100%', background: 'linear-gradient(90deg, #7C5CFC 0%, #A78BFA 100%)', borderRadius: '5px' }} />
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px' }}>
-                    <span style={{ color: '#7C5CFC', fontWeight: 600 }}>28% spent</span>
-                    <span style={{ color: '#A0A4B8' }}>72% remaining</span>
+                    <span style={{ color: '#7C5CFC', fontWeight: 600 }}>{spendPercent}% spent</span>
+                    <span style={{ color: '#A0A4B8' }}>{100 - spendPercent}% remaining</span>
                   </div>
                 </div>
               </div>
