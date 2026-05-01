@@ -196,35 +196,13 @@ export default function ReachInsights() {
     }
   }, []);
 
-  const campaignFromUrl = readCampaignIdFromSearchParams(searchParams);
-  const prevUrlCampaignRef = useRef<string | undefined>(undefined);
-  useEffect(() => {
-    const id = campaignFromUrl;
-    if (id) {
-      setSelectedCampaigns((prev) =>
-        prev.length === 1 && prev[0] === id ? prev : [id]
-      );
-      prevUrlCampaignRef.current = id;
-      return;
-    }
-    if (prevUrlCampaignRef.current !== undefined) {
-      setSelectedCampaigns(["all"]);
-      prevUrlCampaignRef.current = undefined;
-    }
-  }, [campaignFromUrl]);
+  // Removed campaign URL synchronization logic
 
   const handleCampaignChange = useCallback(
     (ids: string[]) => {
       setSelectedCampaigns(ids);
-      const raw = ids[0]?.trim();
-      const idForUrl =
-        raw && raw !== "all" && Number.isFinite(Number(raw)) ? raw : undefined;
-      const next = writeCampaignIdToSearchParams(searchParams, idForUrl);
-      const href = buildUrlWithSearchString(pathname, next);
-      const current = buildUrlWithSearchString(pathname, new URLSearchParams(searchParams.toString()));
-      if (href !== current) router.replace(href, { scroll: false });
     },
-    [pathname, router, searchParams]
+    []
   );
 
   const overviewFilters = useMemo(

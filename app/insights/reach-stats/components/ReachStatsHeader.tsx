@@ -32,13 +32,7 @@ export function ReachStatsHeader({
   const { data: campaignsData } = useOverviewCampaigns();
   const apiCampaigns = campaignsData?.campaigns ?? [];
 
-  // Auto-select first campaign once API data loads
-  useEffect(() => {
-    if (apiCampaigns.length > 0 && (selectedCampaigns[0] === "all" || selectedCampaigns.length === 0)) {
-      onCampaignChange([apiCampaigns[0].id]);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [campaignsData]);
+
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
