@@ -94,7 +94,7 @@ export function FrequencyOptimizationSection({
                 Recoverable Spend
               </div>
               <div style={{ fontSize: 22, fontWeight: 600, color: P.danger, letterSpacing: -0.5 }}>
-                ${(data.totalFreqWaste / 1000).toFixed(1)}K
+                ${((data.totalFreqWaste ?? 0) / 1000).toFixed(1)}K
                 <span style={{ fontSize: 12, fontWeight: 400, color: P.text3 }}>/mo</span>
               </div>
             </div>
@@ -217,10 +217,10 @@ export function FrequencyOptimizationSection({
                   </div>
 
                   <div style={{ fontSize: 12, textAlign: "right", color: P.text2 }}>
-                    {channel.avgFreq.toFixed(1)}x / {channel.optimalFreq.toFixed(1)}x
+                    {(channel.avgFreq ?? 0).toFixed(1)}x / {(channel.optimalFreq ?? 0).toFixed(1)}x
                   </div>
-                  <div style={{ fontSize: 12, textAlign: "right", color: channel.excessFreq > 0 ? P.danger : P.accent }}>
-                    {channel.excessFreq > 0 ? `+${channel.excessFreq.toFixed(1)}x` : "On target"}
+                  <div style={{ fontSize: 12, textAlign: "right", color: (channel.excessFreq ?? 0) > 0 ? P.danger : P.accent }}>
+                    {(channel.excessFreq ?? 0) > 0 ? `+${(channel.excessFreq ?? 0).toFixed(1)}x` : "On target"}
                   </div>
                   <div style={{ fontSize: 12, textAlign: "right", color: P.text2 }}>
                     {fmtMoney(channel.cpqr)}
@@ -263,7 +263,7 @@ export function FrequencyOptimizationSection({
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: P.text3 }}>
                     <span>Unique reach: {fmt(channel.uniqueReach)}</span>
-                    <span>CPM: ${channel.cpm.toFixed(2)}</span>
+                    <span>CPM: ${(channel.cpm ?? 0).toFixed(2)}</span>
                   </div>
                 </div>
               ))}

@@ -477,7 +477,7 @@ export function ReachTrendSection({ data }: ReachTrendSectionProps) {
                   <span style={{ fontSize: 12, color: P.text3 }}>CpQR</span>
                   <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
                     <span style={{ fontSize: 14, fontWeight: 600, color: "#F59E0B" }}>
-                      ${data.cpqr[hoverIndex].toFixed(2)}
+                      ${(data.cpqr[hoverIndex] ?? 0).toFixed(2)}
                     </span>
                     {cpqrDelta != null && (
                       <span
@@ -496,7 +496,7 @@ export function ReachTrendSection({ data }: ReachTrendSectionProps) {
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
                   <span style={{ fontSize: 12, color: P.text3 }}>Benchmark</span>
                   <span style={{ fontSize: 13, fontWeight: 500, color: P.text3 }}>
-                    ${(data.cpqrBenchmark[hoverIndex] ?? benchmarkAverage).toFixed(2)}
+                    ${(data.cpqrBenchmark[hoverIndex] ?? benchmarkAverage ?? 0).toFixed(2)}
                   </span>
                 </div>
               </div>
@@ -507,7 +507,7 @@ export function ReachTrendSection({ data }: ReachTrendSectionProps) {
 
       <div style={{ padding: "0 28px 20px" }}>
         <AgentIQHint
-          text={`Benchmark CpQR is averaging $${benchmarkAverage.toFixed(
+          text={`Benchmark CpQR is averaging $${(benchmarkAverage ?? 0).toFixed(
             2
           )} while the latest qualified reach closed at ${formatCompactMillions(
             data.qr[data.qr.length - 1] ?? 0

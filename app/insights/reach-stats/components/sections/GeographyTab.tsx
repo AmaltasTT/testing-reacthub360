@@ -300,7 +300,7 @@ export function GeographyTab() {
                               <div style={{ gridColumn: "1 / -1", paddingTop: 6, borderTop: `1px solid ${P.accent}15`, marginTop: 4 }}>
                                 <span style={{ fontWeight: 700, color: P.danger }}>{coldSpots} cold spots</span> (&lt;25% QRR) and
                                 <span style={{ fontWeight: 700 }}> {underMkts.length} underperforming market{underMkts.length > 1 ? "s" : ""}</span> ({underMkts.map(m => m.name).join(", ")}) absorb
-                                <span style={{ fontWeight: 700 }}> ${(underSpend / 1000).toFixed(1)}K</span> ({Math.round(underSpend / totalSpend * 100)}% of geo spend).
+                                <span style={{ fontWeight: 700 }}> ${((underSpend ?? 0) / 1000).toFixed(1)}K</span> ({Math.round(underSpend / totalSpend * 100)}% of geo spend).
                                 Reallocate to {topMkt.name} or scale {bestCombo.ch} across top-performing markets.
                               </div>
                             )}

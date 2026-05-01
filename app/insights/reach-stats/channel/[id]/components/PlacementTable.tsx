@@ -34,7 +34,7 @@ function mapApiPlacements(apiData: any[]) {
     const reachValue = metricValue(p.reach);
     const frequencyValue = metricValue(p.frequency);
     const freq = frequencyValue ?? (impressionsValue != null && reachValue ? (impressionsValue / reachValue) : 0);
-    const ratio = `${freq.toFixed(1)}x`;
+    const ratio = `${(freq ?? 0).toFixed(1)}x`;
     const isHigh = freq >= 5;
     const isWarning = freq >= 4;
     const reachLabel = metricFormatted(p.reach) ?? (reachValue != null ? fmtK(reachValue) : String(p.reach ?? "-"));

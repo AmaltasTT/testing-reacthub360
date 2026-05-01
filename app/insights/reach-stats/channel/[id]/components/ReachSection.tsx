@@ -87,7 +87,8 @@ const chartByMetric: Record<ReachMetric, {
   },
 };
 
-const axisTickFormatter = (kind: AxisKind) => (value: number) => {
+const axisTickFormatter = (kind: AxisKind) => (value: number | null | undefined) => {
+  if (value == null) return "";
   if (kind === "currency") return `$${value.toFixed(0)}`;
   if (kind === "percent") return `${value.toFixed(0)}%`;
   if (kind === "times") return `${value.toFixed(1)}x`;

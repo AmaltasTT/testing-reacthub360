@@ -265,7 +265,7 @@ export function TotalReachSection({
       </Card>
 
       <AgentIQHint
-        text={`Your blended CpQR is $${totals.avgCpqr.toFixed(2)} with ${fmtPct(
+        text={`Your blended CpQR is $${(totals.avgCpqr ?? 0).toFixed(2)} with ${fmtPct(
           totals.qrr
         )} QRR across ${fmt(totals.reach)} total reach.`}
         action="See scenarios"

@@ -172,7 +172,8 @@ const engageChartByMetric: Record<EngageMetric, {
   },
 };
 
-const axisTickFormatter = (kind: AxisKind) => (value: number) => {
+const axisTickFormatter = (kind: AxisKind) => (value: number | null | undefined) => {
+  if (value == null) return "";
   if (kind === "currency") return `$${value.toFixed(2)}`;
   if (kind === "percent") return `${value.toFixed(0)}%`;
   return value.toFixed(2);
@@ -707,10 +708,10 @@ export const EngageSection = ({ data }: { data?: TransformedEngage }) => {
                   </td>
                   <td className="px-3 py-[11px] text-right font-mono">{`${Math.round(r.reach / 1000)}K`}</td>
                   <td className="px-3 py-[11px] text-right">
-                    <Pill variant={r.vd}>{`${r.engrate.toFixed(1)}%`}</Pill>
+                    <Pill variant={r.vd}>{`${(r.engrate ?? 0).toFixed(1)}%`}</Pill>
                   </td>
-                  <td className={`px-3 py-[11px] text-right font-mono ${r.vd === "alert" ? "text-[#E11D48]" : "text-[#14171D]"}`}>
-                    {`$${r.costeng.toFixed(2)}`}
+                  <td className="px-3 py-2.5 font-mono text-right">
+                    {`$${(r.costeng ?? 0).toFixed(2)}`}
                   </td>
                   <td className={`px-3 py-[11px] text-right font-mono ${r.watch === 0 ? "text-[#9BA3B0]" : "text-[#14171D]"}`}>
                     {r.watchLabel}

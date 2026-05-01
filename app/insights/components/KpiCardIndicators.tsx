@@ -92,7 +92,7 @@ export function TargetStatusIndicator({
         <span style={{ fontSize: 11, fontWeight: 700, color: statusColor }}>{statusText}</span>
       </div>
       <span style={{ fontSize: 10, fontWeight: 600, color: "#5A5A6E" }}>
-        Target: {unit}{target.toFixed(2)}
+        Target: {unit}{(target ?? 0).toFixed(2)}
       </span>
     </div>
   );

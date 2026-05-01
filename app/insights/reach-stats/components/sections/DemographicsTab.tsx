@@ -589,7 +589,7 @@ export function DemographicsTab() {
                         </div>
                         {underperformers.length > 0 && (
                           <div style={{ gridColumn: "1 / -1", paddingTop: 6, borderTop: `1px solid ${P.accent}15`, marginTop: 4 }}>
-                            <span style={{ fontWeight: 700, color: P.caution }}>{underperformers.length} segment{underperformers.length > 1 ? "s" : ""}</span> below 35% QRR ({underperformers.map(u => u.label).join(", ")}) absorb <span style={{ fontWeight: 700 }}>${(underSpend / 1000).toFixed(1)}K</span> ({Math.round(underSpend / totalSpend * 100)}% of {gLabel.toLowerCase()} spend) — reallocate to {best.label} or {withMetrics.filter(m => m.qrr >= 0.5)[1]?.label || cheapest.label} for better yield.
+                            <span style={{ fontWeight: 700, color: P.caution }}>{underperformers.length} segment{underperformers.length > 1 ? "s" : ""}</span> below 35% QRR ({underperformers.map(u => u.label).join(", ")}) absorb <span style={{ fontWeight: 700 }}>${((underSpend ?? 0) / 1000).toFixed(1)}K</span> ({Math.round(underSpend / totalSpend * 100)}% of {gLabel.toLowerCase()} spend) — reallocate to {best.label} or {withMetrics.filter(m => m.qrr >= 0.5)[1]?.label || cheapest.label} for better yield.
                           </div>
                         )}
                       </div>

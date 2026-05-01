@@ -95,7 +95,7 @@ export function OverlapAnalysisSection({ data }: OverlapAnalysisSectionProps) {
                 Redundant Spend
               </div>
               <div style={{ fontSize: 22, fontWeight: 600, color: P.caution, letterSpacing: -0.5 }}>
-                {(data.totalOverlapWaste / 1000).toFixed(1)}K
+                {((data.totalOverlapWaste ?? 0) / 1000).toFixed(1)}K
                 <span style={{ fontSize: 12, fontWeight: 400, color: P.text3 }}>/mo</span>
               </div>
             </div>
@@ -212,7 +212,7 @@ export function OverlapAnalysisSection({ data }: OverlapAnalysisSectionProps) {
                           color: severityColor,
                         }}
                       >
-                        {(overlap.overlap * 100).toFixed(0)}%
+                        {((overlap.overlap ?? 0) * 100).toFixed(0)}%
                       </div>
                     </div>
                   </div>
@@ -223,7 +223,7 @@ export function OverlapAnalysisSection({ data }: OverlapAnalysisSectionProps) {
                         Shared audience
                       </div>
                       <div style={{ fontSize: 15, fontWeight: 700 }}>{fmt(overlap.shared)}</div>
-                      <div style={{ fontSize: 11, color: P.text3 }}>{(shareOfCombined * 100).toFixed(0)}% of combined</div>
+                      <div style={{ fontSize: 11, color: P.text3 }}>{((shareOfCombined ?? 0) * 100).toFixed(0)}% of combined</div>
                     </div>
                     <div style={{ padding: "10px 12px", borderRadius: 10, background: "rgba(0,0,0,0.03)" }}>
                       <div style={{ fontSize: 10, color: P.text3, fontWeight: 600, marginBottom: 4 }}>
